@@ -58,41 +58,54 @@ def ShowRes(srch):
     search_string=flask.request.form["srchstr"]
     usable_search_string = search_string.replace("'","").lower() # removes apostrophes
             
-    
     #title search:
-    data1=requests.get('https://weebcentral.com/search?text=' + usable_search_string +'&sort=Best+Match&order=Descending&official=Any&anime=Any&adult=Any&display_mode=Full+Display', headers={'User-agent': 'Mozilla/5.0'}).text
+    manga_results_html = requests.post(
+    "https://weebcentral.com/search/simple",
+    data={
+        "text": usable_search_string,
+        "location": "main"
+    },
+    headers={
+        "User-Agent": "Mozilla/5.0",
+        "HX-Request": "true"
+    }
+).text
     
-    print(data1)
+    # print(manga_results_html)
     
     
     # #find actual titles from data (with author last chapter and update date and link)
+    # ! schoenabtic: found title, url and img for now will find author later
     
-    #look for"<div class="story_item">"
-    r1=data1.split('<div class="story_item">')
-    n_manga=len(r1)-1
-    for i in range(n_manga):
-        #for every item in r1 except html headers do the following: split with "\n"    
-        split_string=r1[i+1].split('\n')
-        manga_url=split_string[1].split('"')[3]
-        manga_title=split_string[2].split('"')[3]
-        if "mangakakalot.com" in manga_url:
-            manga_last_ch=split_string[11].split('"')[1].split('_')[-1]
-        elif "readmanganato.com" in manga_url:
-            manga_last_ch=split_string[11].split('"')[3].split('-')[-1]
-        elif "chapmanganato.to" in manga_url:
-            manga_last_ch=split_string[11].split('"')[3].split('-')[-1]
-        else:
-            manga_last_ch='not found'
+    manga_list_html = manga_results_html.split('<div class="w-full join join-vertical flex absolute inset-x-0 z-50 mt-4 rounded-none" x-show="showResult">')[1].split('</div>\n</section>')[0]
 
-        manga_author=r1[i+1].split('<span>Author(s)')[1].split(':')[1].split('<')[0].strip()
-        manga_update=r1[i+1].split('<span>Updated')[1].split(':')[1].split(' ')[1]
-        search_results[str(i+1)]={'url': manga_url,
-                               'title': manga_title,
-                               'last_ch': manga_last_ch,
-                               'update': manga_update,
-                               'author': manga_author}
+    manga_chunks = manga_list_html.split('<a href="')
+
+    for i, manga in enumerate(manga_chunks[1:], start=1): 
+        manga_title = ''
+        manga_url = ''
+        manga_img = ''
+
+        for line in manga.split('\n'):
+            stripped_line = line.strip()
+
+            if stripped_line and '<' not in stripped_line and '>' not in stripped_line:
+                manga_title = stripped_line
+
+            if 'class="btn' in stripped_line:
+                manga_url = stripped_line.split('" class')[0]
+
+            if 'source' in stripped_line:
+                manga_img = stripped_line.split('"')[1]
+                
+            search_results[str(i+1)] = {             
+                    'url': manga_url,
+                    'title': manga_title,
+                    'img': manga_img,
+                }
     
-    return flask.render_template('searchres.html', n_manga=n_manga, res=search_results)   
+    
+    return flask.render_template('searchres.html', n_manga=len(manga_chunks), res=search_results)   
 
 @app.route("/manga_result/choice/<usr_choice>")
 def GetMangaData(usr_choice):
