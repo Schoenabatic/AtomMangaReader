@@ -51,16 +51,19 @@ def home():
 def GetRes():
     search_results.clear()
     return flask.render_template('searchpage.html')
-``
+
 @app.route("/results/<srch>", methods=["POST","GET"])
 def ShowRes(srch):
     user_selections['manga']=1000000 #reset global tracking
     search_string=flask.request.form["srchstr"]
-    usable_search_string = (search_string.replace("'","")).replace(" ", "-") # removes apostrophes and joins words with -
+    usable_search_string = search_string.replace("'","").lower() # removes apostrophes
             
     
     #title search:
-    data1=requests.get('https://mangakakalot.com/search/story/'+usable_search_string, headers={'User-agent': 'Mozilla/5.0'}).text
+    data1=requests.get('https://weebcentral.com/search?text=' + usable_search_string +'&sort=Best+Match&order=Descending&official=Any&anime=Any&adult=Any&display_mode=Full+Display', headers={'User-agent': 'Mozilla/5.0'}).text
+    
+    print(data1)
+    
     
     # #find actual titles from data (with author last chapter and update date and link)
     
@@ -501,7 +504,7 @@ def shutdown():
     if flask.request.method=="POST":  
         #clear old files from cache
         dir2clear = 'static/chapter_cache'
-        for f in os.listdir(dir2clear):
+        for f in os.listdir(dir2clear): 
             os.remove(os.path.join(dir2clear, f))
             
         try:
@@ -518,7 +521,13 @@ def shutdown():
         return flask.render_template('shutdown.html')
     else:
         return flask.render_template('shutdown.html')
+    
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=1234, debug=True)
+    
+    
 
 # if __name__=="__main__":
 #     app.run(host='127.0.0.42', port=1234) #Alternative code to run; Must change last line in BMRrun.sh to: "/mnt/onboard/.BMR/bmrpyenv/bin/python3 BMRmain.py
-#     app.run(host='0.0.0.0', port=1234) #For desktop only, do not run on Kobo
+#     app.run(host='0.0.0.0', port= 1234) #For desktop only, do not run on Kobo
+
