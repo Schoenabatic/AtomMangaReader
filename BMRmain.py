@@ -111,6 +111,10 @@ def ShowRes(srch):
 
 @app.route("/manga_result/choice/<usr_choice>")
 def GetMangaData(usr_choice):
+    headers={
+        "User-Agent": "Mozilla/5.0",
+        "HX-Request": "true"
+    }
 
     manga_selected=usr_choice
     user_selections['manga']=usr_choice #global tracking
@@ -118,90 +122,116 @@ def GetMangaData(usr_choice):
     
     manga_data['url']=search_results[str(manga_selected)]['url']
     manga_data['title']=search_results[str(manga_selected)]['title']
+    
+    manga_page_url = 'https://cubari.moe/read/weebcentral/'+ manga_data['url'].split('/')[4] + '/'
+    
+    
+    manga_page_html = requests.get(manga_page_url, headers=headers).text
+    
+    # ! schoenbatic: get manga title and chapter url
+    
+    chapters_html = manga_page_html.split('<tbody id="chapterTable">')[1].split('</tbody>')[0]
 
-    # open manga page, get chapter list: links and numbers
-    data2=requests.get(search_results[str(manga_selected)]['url'], headers={'User-agent': 'Mozilla/5.0'}).text
+    chapters_list = chapters_html.split('</tr>')
+
+    for chapter in chapters_list:
+        chapter_title = ''
+        chapter_url = ''
     
-    #Get author name:
-    manga_data['author']=data2.split('/author/')[1].split('>')[1].split('<')[0]
-    
-    #add description
-    manga_data['description']=data2.split('"description"')[1].split('"')[1].replace('&quot;','"').replace("&#39;","'")
-    
-    #get manga cover image
-    #    first clear old image file
-    try:
-        os.remove('static/manga_cover/manga_cover.jpg')
-    except:
-        pass
-    manga_cover_link=data2.split('"og:image" content')[1].split('"')[1]
-    manga_cover_response=requests.get(manga_cover_link, verify=True)
-    manga_cover=Image.open(io.BytesIO(manga_cover_response.content)).convert('RGB')
-    manga_cover.save('static/manga_cover/manga_cover.jpg')
-    
-    #get genres:
-    manga_data['genres']=[]
-    g_data=data2.split('Genres')[1].split('</li>')[0]
-    g_data=g_data.split('</a>')
-    n_genres=len(g_data)-1
-    for i in range(n_genres):
-        if 'mangakakalot.com' in manga_data['url']:
-            g_n=g_data[i].split('>')[1]
-            manga_data['genres'].append(g_n)
-        elif 'readmanganato.com' in manga_data['url']:
-            if i not in [0,n_genres-1]:
-                g_n=g_data[i].split('>')[1]
-                manga_data['genres'].append(g_n)
-    
-    #Get chapter data
-    manga_data['ch_list']={}
-    #add chapters: process different for each website:
-    if 'mangakakalot.com' in manga_data['url']:
-        ch_data=data2.split('<div class="row">')
-        n_ch=len(ch_data)-1
-        for i in range(n_ch):
-            each_ch_string=ch_data[i+1].split('\n')
-            ch_link=each_ch_string[1].split('"')[1]
-            ch_num=ch_link.split('_')[-1]
-            ch_title=each_ch_string[1].split('"')[3]
-            ch_update=each_ch_string[3].split('"')[1].split(' ')[0]
-            manga_data['ch_list'][str(ch_num)]={'ch_link': ch_link,
-                                                'ch_title': ch_title,
-                                                'ch_update': ch_update}
+        for line in chapter.split('\n'):
+            if "Chapter" in line:
+                chapter_title = line.strip()
             
-    elif 'readmanganato.com' in manga_data['url']:
-        ch_data=data2.split('<li class="a-h">')
-        n_ch=len(ch_data)-1
-        for i in range(n_ch):
-            each_ch_string=ch_data[i+1].split('\n')
-            ch_link=each_ch_string[1].split('"')[5]
-            ch_num=ch_link.split('-')[-1]
-            ch_title=each_ch_string[1].split('"')[7]
-            ch_update=each_ch_string[3].split('"')[3].split(' ')[0]+each_ch_string[3].split('"')[3].split(' ')[1]
-            manga_data['ch_list'][str(ch_num)]={'ch_link': ch_link,
-                                                'ch_title': ch_title,
-                                                'ch_update': ch_update}
+            if 'a href' in line:
+                chapter_url = line.split('href="')[1].split('">')[0]
             
-    elif 'chapmanganato.to' in manga_data['url']:
-        ch_data=data2.split('<li class="a-h">')
-        n_ch=len(ch_data)-1
-        for i in range(n_ch):
-            each_ch_string=ch_data[i+1].split('\n')
-            ch_link=each_ch_string[1].split('"')[5]
-            ch_num=ch_link.split('-')[-1]
-            ch_title=each_ch_string[1].split('"')[7]
-            try:
-                ch_update=each_ch_string[3].split('"')[5].split(' ')[0]+each_ch_string[3].split('"')[5].split(' ')[1]
-            except:
-                ch_update="0000"
-            manga_data['ch_list'][str(ch_num)]={'ch_link': ch_link,
-                                                'ch_title': ch_title,
-                                                'ch_update': ch_update}
     
-    manga_data['last_ch']=list(manga_data['ch_list'].keys())[0]
-    manga_data['update']=manga_data['ch_list'][manga_data['last_ch']]['ch_update']
     
-    return flask.render_template('mangapage.html', n_ch=n_ch, manga_data=manga_data)
+
+
+    # # open manga page, get chapter list: links and numbers
+    # data2=requests.get(search_results[str(manga_selected)]['url'], headers={'User-agent': 'Mozilla/5.0'}).text
+    
+    # #Get author name:
+    # manga_data['author']=data2.split('/author/')[1].split('>')[1].split('<')[0]
+    
+    # #add description
+    # manga_data['description']=data2.split('"description"')[1].split('"')[1].replace('&quot;','"').replace("&#39;","'")
+    
+    # #get manga cover image
+    # #    first clear old image file
+    # try:
+    #     os.remove('static/manga_cover/manga_cover.jpg')
+    # except:
+    #     pass
+    # manga_cover_link=data2.split('"og:image" content')[1].split('"')[1]
+    # manga_cover_response=requests.get(manga_cover_link, verify=True)
+    # manga_cover=Image.open(io.BytesIO(manga_cover_response.content)).convert('RGB')
+    # manga_cover.save('static/manga_cover/manga_cover.jpg')
+    
+    # #get genres:
+    # manga_data['genres']=[]
+    # g_data=data2.split('Genres')[1].split('</li>')[0]
+    # g_data=g_data.split('</a>')
+    # n_genres=len(g_data)-1
+    # for i in range(n_genres):
+    #     if 'mangakakalot.com' in manga_data['url']:
+    #         g_n=g_data[i].split('>')[1]
+    #         manga_data['genres'].append(g_n)
+    #     elif 'readmanganato.com' in manga_data['url']:
+    #         if i not in [0,n_genres-1]:
+    #             g_n=g_data[i].split('>')[1]
+    #             manga_data['genres'].append(g_n)
+    
+    # #Get chapter data
+    # manga_data['ch_list']={}
+    # #add chapters: process different for each website:
+    # if 'mangakakalot.com' in manga_data['url']:
+    #     ch_data=data2.split('<div class="row">')
+    #     n_ch=len(ch_data)-1
+    #     for i in range(n_ch):
+    #         each_ch_string=ch_data[i+1].split('\n')
+    #         ch_link=each_ch_string[1].split('"')[1]
+    #         ch_num=ch_link.split('_')[-1]
+    #         ch_title=each_ch_string[1].split('"')[3]
+    #         ch_update=each_ch_string[3].split('"')[1].split(' ')[0]
+    #         manga_data['ch_list'][str(ch_num)]={'ch_link': ch_link,
+    #                                             'ch_title': ch_title,
+    #                                             'ch_update': ch_update}
+            
+    # elif 'readmanganato.com' in manga_data['url']:
+    #     ch_data=data2.split('<li class="a-h">')
+    #     n_ch=len(ch_data)-1
+    #     for i in range(n_ch):
+    #         each_ch_string=ch_data[i+1].split('\n')
+    #         ch_link=each_ch_string[1].split('"')[5]
+    #         ch_num=ch_link.split('-')[-1]
+    #         ch_title=each_ch_string[1].split('"')[7]
+    #         ch_update=each_ch_string[3].split('"')[3].split(' ')[0]+each_ch_string[3].split('"')[3].split(' ')[1]
+    #         manga_data['ch_list'][str(ch_num)]={'ch_link': ch_link,
+    #                                             'ch_title': ch_title,
+    #                                             'ch_update': ch_update}
+            
+    # elif 'chapmanganato.to' in manga_data['url']:
+    #     ch_data=data2.split('<li class="a-h">')
+    #     n_ch=len(ch_data)-1
+    #     for i in range(n_ch):
+    #         each_ch_string=ch_data[i+1].split('\n')
+    #         ch_link=each_ch_string[1].split('"')[5]
+    #         ch_num=ch_link.split('-')[-1]
+    #         ch_title=each_ch_string[1].split('"')[7]
+    #         try:
+    #             ch_update=each_ch_string[3].split('"')[5].split(' ')[0]+each_ch_string[3].split('"')[5].split(' ')[1]
+    #         except:
+    #             ch_update="0000"
+    #         manga_data['ch_list'][str(ch_num)]={'ch_link': ch_link,
+    #                                             'ch_title': ch_title,
+    #                                             'ch_update': ch_update}
+    
+    # manga_data['last_ch']=list(manga_data['ch_list'].keys())[0]
+    # manga_data['update']=manga_data['ch_list'][manga_data['last_ch']]['ch_update']
+    
+    return flask.render_template('mangapage.html', n_ch=1, manga_data=manga_data)
 
 @app.route("/manga_reader/ch/<ch_no>/p<p_no>")
 def GetChap(ch_no,p_no):
