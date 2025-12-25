@@ -14,61 +14,72 @@ Atom Manga Reader focuses on **reading manga you already know about**, rather th
 
 ## Features
 
-1. Allows you to read manga from online sources. (currently just mangakakalot)
-2. Allows you to add titles to a favorites list for easy access.
-3. Allows you to save chapters for offline reading. (Although you will need to be connected to a network for opening the browser, you do not have to be connected to the internet. For example, connecting to a mobile hotspot without internet tethering works well)
-4. Manga reading should be a smooth experience. No obstructive elements will be on the screen while reading a manga chapter. Tapping on the left or right side will flip the pages (left turn to go to the next page). Tapping in the center opens up the menu.
-5. You can add your own manga to the library. On the microSD card, navigate to KOBOeReader/.BMR/static/library Here, you can create a folder with the manga title as it's name. Inside this folder, add folders with chapter titles, which will have the pages stored in png/jpg image formats. Extracting CBR or CBZ files should give you this structure. [library>manga title> chapter title> images]
-6. All of the files and programs remain on the mnt/onboard partition of the device. No files are placed on the root (/) partition or the /usr partition. This way updating, deleting files and making any changes (backing up files, editing htmls or the python script for personalization or improvement) is safer and easier.
+1. **Online Manga Reading**: Read manga from online sources (currently powered by **Weeb Central**).
+2. **Favorites**: Add titles to a favorites list for easy access.
+3. **Library**: Add titles to a personal library.
+4. **E-Ink Optimized UI**: A clean, high-contrast interface designed specifically for E-Ink screens.
+5. **Navigation**:
+   - Tap **Left** for Previous Page.
+   - Tap **Right** for Next Page.
+   - Tap **Center** to open the menu.
+   - Keyboard support (Left/Right arrows).
+
+## Work in Progress (WIP)
+
+The following features are currently in development or partially implemented:
+
+1. **Offline Reading**: Saving chapters for offline reading is currently being reworked.
+2. **Caching**: Improved caching for smoother reading is in progress.
+3. **Download Manager**: Better management of downloaded chapters.
 
 ## Installation
 
 1. Make sure you have 300 MB or more space on your Kobo microSD card.
-2. Install <a href="https://www.mobileread.com/forums/showthread.php?t=329525">NickelMenu</a>. If you don't have it installed already, click the link and follow the instructions there. NickelMenu will help us create a menu item to launch BMR
+2. Install <a href="https://www.mobileread.com/forums/showthread.php?t=329525">NickelMenu</a>. If you don't have it installed already, click the link and follow the instructions there. NickelMenu will help us create a menu item to launch AMR.
 3. To prevent images from showing up as books, perform the following operation by connecting your Kobo to your computer:
    - Navigate to KOBOeReader/.kobo/Kobo and open Kobo eReader.conf in the text editor of your choice
    - Scroll down to find `[FeatureSettings]` , if it doesn't exist, create it! (type it in)
    - Under `[FeatureSettings]`, paste the following: `ExcludeSyncFolders=\\.(?!kobo|adobe).*?`
-4. From the pane on the right, go to the <a href="https://github.com/buxared/BananaMangaReader/releases">Releases</a> page or select the latest release. Download the file named "[Release date]\_BMR_v[latest version].zip", for example "220905_BMR_v0.zip".
-5. Unzipping the file should give you a folder named ".BMR". Copy this folder to the root of your microSD card. (The root is the KOBOeReader folder. Simply drag ".BMR" to KOBOeReader)
+4. Download the latest release of Atom Manga Reader.
+5. Unzipping the file should give you a folder named ".AMR". Copy this folder to the root of your microSD card. (The root is the KOBOeReader folder. Simply drag ".AMR" to KOBOeReader)
 6. Create a menu entry using NickelMenu.
-   - From KOBOeReader/.BMR, open "nickelmenuconfig.txt" and copy it's contents.
+   - From KOBOeReader/.AMR, open "nickelmenuconfig.txt" and copy it's contents.
    - Navigate to KOBOeReader/.adds/nm/
    - If a config file does not exist, create a new text file with any name, for example, "config.txt"
    - Paste the contents from "nickelmenuconfig.txt" into the config file.
 7. Safely eject your eReader from your computer.
 
-You are now ready to use Banana Manga Reader!
+You are now ready to use Atom Manga Reader!
 
 ## Updating
 
 1. Connect your Kobo to your computer and Navigate to KOBOeReader
-2. If you wish to retain your manga library and favorites, make a copy your library folder (KOBOeReader/.BMR/static/library) and favorites (KOBOeReader/.BMR/static/mangafavs.csv) to a different location on your computer.
-3. From the pane on the right, go to the <a href="https://github.com/buxared/BananaMangaReader/releases">Releases</a> page or select the latest release. Download the file named "[Release date]\_BMR_v[latest version].zip", for example "250113_BMR_v0.3.zip".
-4. Unzipping the file should give you a folder named ".BMR". Copy this folder to the root of your microSD card. (The root is the KOBOeReader folder. Simply drag ".BMR" to KOBOeReader). This will replace the older .BMR folder with the new one. Alternatively, you can manually delete the .BMR folder in the KOBOeReader folder and copy over the new one obtained by unzipping the downloaded zip file.
-5. Move the manga library and favorites to the newly replaced .BMR folder in the same locations. The manga library "library" folder favorites "mangafavs.csv" should both be moved to the KOBOeReader/.BMR/static/ folder
+2. If you wish to retain your manga library and favorites, make a copy your library folder (KOBOeReader/.AMR/static/library) and favorites (KOBOeReader/.AMR/static/mangafavs.csv) to a different location on your computer.
+3. Download the latest release.
+4. Unzipping the file should give you a folder named ".AMR". Copy this folder to the root of your microSD card. (The root is the KOBOeReader folder. Simply drag ".AMR" to KOBOeReader). This will replace the older .AMR folder with the new one. Alternatively, you can manually delete the .AMR folder in the KOBOeReader folder and copy over the new one obtained by unzipping the downloaded zip file.
+5. Move the manga library and favorites to the newly replaced .AMR folder in the same locations. The manga library "library" folder favorites "mangafavs.csv" should both be moved to the KOBOeReader/.AMR/static/ folder
 6. Safely eject your eReader from your computer.
 
 The application has now been updated.
 
-## Launching and Using BMR
+## Launching and Using AMR
 
-Once you have installed BMR, you can launch the app by performing the following steps:
+Once you have installed AMR, you can launch the app by performing the following steps:
 
-1. Open NickelMenu on your Kobo eReader and select "Start BMR server". Click "OK".
-2. Open NickelMenu on your Kobo eReader and select "Open BMR".
+1. Open NickelMenu on your Kobo eReader and select "Start AMR server". Click "OK".
+2. Open NickelMenu on your Kobo eReader and select "Open AMR".
 3. Enjoy! More details and instructions for use can be found under "Navigation" from the hamburger menu in the top left corner of the application/browser window.
-4. Make sure you always exit the app by navigating to "Close app" from the hamburger menu. Press the "Shut down" button. (Not shutting down this way will keep the BMR server running in the background. You don't want there to be multiple instances using up CPU resources when you start BMR again next time. So, it's best to close the app this way)
+4. Make sure you always exit the app by navigating to "Close app" from the hamburger menu. Press the "Shut down" button. (Not shutting down this way will keep the AMR server running in the background. You don't want there to be multiple instances using up CPU resources when you start AMR again next time. So, it's best to close the app this way)
 
 ### Note:
 
 You will need to be connected to a network to open the application, since it works using the kobo browser. (You do not need an internet connection. Connecting to a network without internet access seems to work)
 
-## Uninstall BMR
+## Uninstall AMR
 
-To uninstall BMR, connect your Kobo to your computer and navigate to KOBOeReader/.BMR and create a file (any type) called "uninstall".
-Next, run the startup script from your Kobo: go to nickel menu and select Start BMR server.
-This will remove BMR and all of the contents of KOBOeReader/.BMR. Any downloaded contents will be lost. Make a backup of the KOBOeReader/.BMR/static/library directory to keep your downloads.
+To uninstall AMR, connect your Kobo to your computer and navigate to KOBOeReader/.AMR and create a file (any type) called "uninstall".
+Next, run the startup script from your Kobo: go to nickel menu and select Start AMR server.
+This will remove AMR and all of the contents of KOBOeReader/.AMR. Any downloaded contents will be lost. Make a backup of the KOBOeReader/.AMR/static/library directory to keep your downloads.
 To remove the NickelMenu entries, you will have to open the config file from KOBOeReader/.adds/nm/ and remove the entries manually.
 
 ## Obligatory Disclaimer:
@@ -77,7 +88,7 @@ I have developed and tested the application on a Kobo Libra 2, which is the only
 
 ## Known Bugs and occurances:
 
-1. The first time you open the app using "Open BMR", it may fail, as it needs a couple of seconds for the server to start. Future trials will be faster
+1. The first time you open the app using "Open AMR", it may fail, as it needs a couple of seconds for the server to start. Future trials will be faster
 2. There is a small image near the hamburger menu icon when the app opens up. This seems to be an artifact of the eink screen. It disappears after clicking/touching anywhere else.
 3. Once a chapter link is clicked, loading the first manga page may require about 30 seconds. This is because all of the images are downlaoded to the cache for fast scrolling.
 4. Sometimes, when opening a manga chapter, the screen will be blank except for a small box with a "?" in the middle of the screen. Hitting the refresh icon of the browser will solve this problem. This seems to happen because some times the program jumps to the next step without completing the current step (starts to show image without actually fetching it first)
@@ -94,6 +105,6 @@ The idea of using the browser and the startup script were inspired by the <a hre
 
 ## Leave a Tip!
 
-If you enjoyed using Banana Manga Reader, leave a nice comment on the mobileread page. Better yet, leave me a tip in my tip jar! (paypal: buxared14@gmail.com) As a novice in python, HTML and Linux, it took me many hours and many months to get here. BMR will always remain free, so consider donating. Thanks!
+If you enjoyed using Atom Manga Reader, leave a nice comment on the mobileread page. Better yet, leave me a tip in my tip jar! (paypal: buxared14@gmail.com) As a novice in python, HTML and Linux, it took me many hours and many months to get here. AMR will always remain free, so consider donating. Thanks!
 
-## I hope you have fun using Banana Manga Reader! Go Bananas !!
+## I hope you have fun using Atom Manga Reader!
