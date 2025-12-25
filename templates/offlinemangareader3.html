@@ -105,27 +105,27 @@
     </div>
 
     <!-- Navigation Zones -->
-    <!-- Left Zone: Next Page (RTL assumption or user preference) -->
+    <!-- Left Zone: Prev Page (LTR) -->
+    {% if p_no - 1 >= 1 %}
+    <a
+      href="/offline_reader/ch/{{ch_no}}/p{{p_no-1}}"
+      class="touch-zone zone-left"
+    ></a>
+    {% else %}
+    <a href="/offline_reader/ch/{{ch_no}}/p1" class="touch-zone zone-left"></a>
+    {% endif %}
+
+    <!-- Right Zone: Next Page (LTR) -->
     {% if p_no + 1 <= pg_last %}
     <a
       href="/offline_reader/ch/{{ch_no}}/p{{p_no+1}}"
-      class="touch-zone zone-left"
+      class="touch-zone zone-right"
     ></a>
     {% else %}
     <a
       href="/offline_reader/ch/{{ch_no}}/p{{p_no}}"
-      class="touch-zone zone-left"
-    ></a>
-    {% endif %}
-
-    <!-- Right Zone: Prev Page -->
-    {% if p_no - 1 >= 1 %}
-    <a
-      href="/offline_reader/ch/{{ch_no}}/p{{p_no-1}}"
       class="touch-zone zone-right"
     ></a>
-    {% else %}
-    <a href="/offline_reader/ch/{{ch_no}}/p1" class="touch-zone zone-right"></a>
     {% endif %}
 
     <!-- Center Zone (Menu) -->
@@ -172,12 +172,12 @@
       // Keyboard navigation
       document.addEventListener("keydown", function(e) {
           if (e.key === "ArrowLeft") {
-              {% if p_no + 1 <= pg_last %}
-              window.location.href = "/offline_reader/ch/{{ch_no}}/p{{p_no+1}}";
-              {% endif %}
-          } else if (e.key === "ArrowRight") {
               {% if p_no - 1 >= 1 %}
               window.location.href = "/offline_reader/ch/{{ch_no}}/p{{p_no-1}}";
+              {% endif %}
+          } else if (e.key === "ArrowRight") {
+              {% if p_no + 1 <= pg_last %}
+              window.location.href = "/offline_reader/ch/{{ch_no}}/p{{p_no+1}}";
               {% endif %}
           } else if (e.key === "Enter") {
                toggleMenu();

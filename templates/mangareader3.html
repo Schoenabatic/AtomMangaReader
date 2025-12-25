@@ -120,40 +120,28 @@
     </div>
 
     <!-- Navigation Zones -->
-    <!-- Left Zone: Previous Page (or Next depending on reading direction, assuming LTR for UI but manga is RTL usually. 
-         However, standard web manga readers often use Right -> Next Page. 
-         The original code had:
-         Left 25% -> Next Page (p_no + 1) ?? Wait.
-         Original code:
-         <div style="position: fixed; left: 0%; ..."></div> -> href p_no + 1 (Next)
-         <div style="position: fixed; left: 75%; ..."></div> -> href p_no - 1 (Prev)
-         
-         This implies Left Click = Next Page. This is typical for RTL (Manga) reading on a screen if you tap the left side.
-         I will preserve this logic: Left Zone -> Next Page.
-    -->
 
-    <!-- Left Zone (Next Page for RTL) -->
+    <!-- Left Zone: Previous Page (LTR) -->
+    {% if p_no - 1 >= 1 %}
+    <a
+      href="/manga_reader/ch/{{ ch_no }}/p{{ p_no - 1 }}"
+      class="touch-zone zone-left"
+    ></a>
+    {% else %}
+    <a href="/manga_reader/ch/{{ ch_no }}/p1" class="touch-zone zone-left"></a>
+    {% endif %}
+
+    <!-- Right Zone: Next Page (LTR) -->
     {% if p_no + 1 <= pg_last %}
     <a
       href="/manga_reader/ch/{{ ch_no }}/p{{ p_no + 1 }}"
-      class="touch-zone zone-left"
+      class="touch-zone zone-right"
     ></a>
     {% else %}
     <a
       href="/manga_reader/ch/{{ ch_no }}/p{{ p_no }}"
-      class="touch-zone zone-left"
-    ></a>
-    <!-- Stay on last page or go to next chapter? Original stayed on page -->
-    {% endif %}
-
-    <!-- Right Zone (Prev Page for RTL) -->
-    {% if p_no - 1 >= 1 %}
-    <a
-      href="/manga_reader/ch/{{ ch_no }}/p{{ p_no - 1 }}"
       class="touch-zone zone-right"
     ></a>
-    {% else %}
-    <a href="/manga_reader/ch/{{ ch_no }}/p1" class="touch-zone zone-right"></a>
     {% endif %}
 
     <!-- Center Zone (Menu) -->
@@ -222,14 +210,14 @@
       // Keyboard navigation
       document.addEventListener("keydown", function(e) {
           if (e.key === "ArrowLeft") {
-              // Left Arrow -> Next Page (RTL)
-              {% if p_no + 1 <= pg_last %}
-              window.location.href = "/manga_reader/ch/{{ ch_no }}/p{{ p_no + 1 }}";
-              {% endif %}
-          } else if (e.key === "ArrowRight") {
-              // Right Arrow -> Prev Page (RTL)
+              // Left Arrow -> Prev Page (LTR)
               {% if p_no - 1 >= 1 %}
               window.location.href = "/manga_reader/ch/{{ ch_no }}/p{{ p_no - 1 }}";
+              {% endif %}
+          } else if (e.key === "ArrowRight") {
+              // Right Arrow -> Next Page (LTR)
+              {% if p_no + 1 <= pg_last %}
+              window.location.href = "/manga_reader/ch/{{ ch_no }}/p{{ p_no + 1 }}";
               {% endif %}
           } else if (e.key === "Enter") {
                if (document.getElementById("readerMenu").style.display === "block") {
