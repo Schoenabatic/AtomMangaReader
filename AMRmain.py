@@ -319,20 +319,22 @@ def GetChap(ch_no,p_no):
 def FavAdd():    
     m_title=search_results[user_selections['manga']]['title']
     m_url=search_results[user_selections['manga']]['url']
+    m_img=search_results[user_selections['manga']].get('img', '')
+
     #write data required to simulate search results
     #step 1:check if entry already exists
+    counter=0
     with open('static/mangafavs.csv', 'r', newline='') as csv_file:
-        counter=0
         reader=csv.reader(csv_file)
         for line in reader:
-            if m_title in line:
+            if line and m_title == line[0]:
                 counter=counter+1
     csv_file.close()
     #step 2: write entry if it doesn't exists
     with open('static/mangafavs.csv', 'a', newline='') as csv_file:
         writer = csv.writer(csv_file)  # Note: writes lists, not dicts.
         if counter==0:#write only if entry does not exist already
-            writer.writerow([m_title, m_url])
+            writer.writerow([m_title, m_url, m_img])
     csv_file.close()
         
     manga_home_link='/manga_result/choice/'+user_selections['manga']
@@ -349,15 +351,22 @@ def FavDisp():
     #read data from mangafavs.csv to dictionary
     with open('static/mangafavs.csv', 'r', newline='') as csv_file:
         reader=csv.reader(csv_file)
-        manga_favs=dict(reader)
+        
+        num=0
+        for row in reader:
+            if not row: continue
+            num += 1
+            title = row[0]
+            url = row[1]
+            img = row[2] if len(row) > 2 else ''
+            
+            search_results[str(num)] = {
+                'title': title,
+                'url': url,
+                'img': img
+            }
     csv_file.close()
 
-    #simulate search_results
-    num=0
-    for manga in manga_favs:
-        num=num+1
-        search_results[str(num)]={'title': manga,
-                                  'url': manga_favs[manga]}
     n_manga=len(search_results)
     #This page should be similar to searchres
     return flask.render_template('favoriteshome.html', n_manga=n_manga, res=search_results)
@@ -367,19 +376,19 @@ def FavDel(fav_num):
     #delete entry from dictionary
     removed_title=search_results[fav_num]['title']
     
-    #read data from mangafavs.csv to dictionary
+    rows = []
+    #read data from mangafavs.csv
     with open('static/mangafavs.csv', 'r', newline='') as csv_file:
         reader=csv.reader(csv_file)
-        manga_favs=dict(reader)
+        for row in reader:
+            if row and row[0] != removed_title:
+                rows.append(row)
     csv_file.close()
     
-    del manga_favs[removed_title]
-    
-    #rewrite updated dictionary to mangafavs.csv
+    #rewrite updated list to mangafavs.csv
     with open('static/mangafavs.csv', 'w', newline='') as csv_file:  
         writer = csv.writer(csv_file)
-        for key, value in manga_favs.items():
-            writer.writerow([key, value])
+        writer.writerows(rows)
     csv_file.close()
     #provide button to go back to favoriteshome page
     return flask.render_template('favremoval.html', removed_title=removed_title)

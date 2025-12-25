@@ -87,7 +87,10 @@ To remove the NickelMenu entries, you will have to open the config file from KOB
 
 ## Obligatory Disclaimer:
 
-I have developed and tested the application on a Kobo Libra 2, which is the only Kobo device I own. I cannot guarantee that it will work as intended on other Kobo devices. Use at your own risk. I am not responsible for any damages/ bricking of your devices.
+This software is provided "as is", without warranty of any kind.
+I (Schoenabatic) develop and test this fork primarily on my own devices. The original application was developed on a Kobo Libra 2. I cannot guarantee that it will work perfectly on every Kobo model or firmware version.
+
+**Use at your own risk.** I am not responsible for any damages, data loss, or bricking of your devices.
 
 ## Known Bugs and occurances:
 
@@ -100,14 +103,22 @@ I have developed and tested the application on a Kobo Libra 2, which is the only
 
 Go to <a href="https://www.mobileread.com/forums/showthread.php?t=348950">mobileread</a> for more details and to ask questions
 
-## Acknowlegements
+## Acknowledgements
 
-Many thanks to all the developers of <a href="https://github.com/pgaskin/NickelMenu">NickelMenu</a> for creating a tool that allows us to experiment with our Kobos.
-
-The idea of using the browser and the startup script were inspired by the <a href="https://www.mobileread.com/forums/showthread.php?t=262353">WebPortal</a> project by <a href="https://github.com/frostschutz">frostschutz</a>
+- **buxared**: For creating the original **Banana Manga Reader**, without which this project would not exist.
+- **NickelMenu Developers**: For creating the tool that allows us to launch custom scripts on Kobo.
+- **frostschutz**: For the **WebPortal** project, which inspired the browser-based approach.
 
 ## Leave a Tip!
 
-If you enjoyed using Atom Manga Reader, leave a nice comment on the mobileread page. Better yet, leave me a tip in my tip jar! (paypal: buxared14@gmail.com) As a novice in python, HTML and Linux, it took me many hours and many months to get here. AMR will always remain free, so consider donating. Thanks!
+Atom Manga Reader is a fork of **Banana Manga Reader**, originally created by **buxared**.
+
+If you enjoy using this application, please consider supporting the original creator who laid the foundation for this project.
+
+**Original Creator's Tip Jar (buxared):**
+
+- PayPal: buxared14@gmail.com
+
+As the maintainer of this fork, I (Schoenabatic) am dedicated to improving and keeping this project alive for the community. AMR will always remain free.
 
 ## I hope you have fun using Atom Manga Reader!

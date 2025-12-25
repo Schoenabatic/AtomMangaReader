@@ -33,6 +33,7 @@
               class="manga-cover"
               src="{{ manga_data['img'] }}"
               alt="Cover"
+              onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/pgunavail.jpg') }}';"
             />
           </div>
 
@@ -70,12 +71,43 @@
         </div>
 
         <h3>Chapters</h3>
+
+        <div
+          style="
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+          "
+        >
+          <input
+            type="text"
+            id="jumpInput"
+            placeholder="Jump to Chapter #"
+            style="
+              flex: 1;
+              padding: 10px;
+              border: 2px solid black;
+              margin-bottom: 0;
+            "
+          />
+          <button
+            class="btn"
+            onclick="jumpToChapter()"
+            style="width: auto; padding: 10px 20px; margin-bottom: 0"
+          >
+            Go
+          </button>
+        </div>
+
         {% if manga_data['ch_list']|length > 0 %}
         <div class="chapter-list">
-          {% for key in manga_data['ch_list'] %}
+          {% set keys = manga_data['ch_list']|list %} {% set total = keys|length
+          %} {% for key in keys %} {% set is_hidden = (loop.index > 6) and
+          (loop.index <= total - 3) %}
           <a
             href="{{ manga_data['ch_list'][key]['ch_url'] }}"
-            class="chapter-item"
+            class="chapter-item {% if is_hidden %}hidden-chapter{% endif %}"
           >
             <span style="font-weight: bold"
               >{{ manga_data['ch_list'][key]['ch_title'] }}</span
@@ -84,7 +116,16 @@
               >{{ manga_data['ch_list'][key]['ch_update'] }}</span
             >
           </a>
-          {% endfor %}
+          {% if loop.index == 6 and total > 9 %}
+          <button
+            id="showAllBtn"
+            class="btn btn-secondary"
+            style="width: 100%; margin: 10px 0"
+            onclick="showAllChapters()"
+          >
+            Show All Chapters
+          </button>
+          {% endif %} {% endfor %}
         </div>
         {% else %}
         <div
@@ -94,6 +135,29 @@
           <p>No chapters available.</p>
         </div>
         {% endif %}
+
+        <style>
+          .hidden-chapter {
+            display: none !important;
+          }
+        </style>
+
+        <script>
+          function jumpToChapter() {
+            var ch = document.getElementById("jumpInput").value.trim();
+            if (ch) {
+              window.location.href = "/manga_reader/ch/" + ch + "/p1";
+            }
+          }
+
+          function showAllChapters() {
+            var hidden = document.querySelectorAll(".hidden-chapter");
+            hidden.forEach(function (el) {
+              el.classList.remove("hidden-chapter");
+            });
+            document.getElementById("showAllBtn").style.display = "none";
+          }
+        </script>
       </div>
     </div>
   </body>

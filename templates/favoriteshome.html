@@ -38,19 +38,34 @@
               display: flex;
               justify-content: space-between;
               align-items: center;
+              gap: 1rem;
             "
           >
-            <a
-              href="/manga_result/choice/{{key}}"
-              style="
-                font-weight: bold;
-                font-size: 1.2rem;
-                text-decoration: none;
-                color: black;
-              "
-            >
-              {{ res[key]['title'] }}
-            </a>
+            <div style="display: flex; align-items: center; gap: 1rem; flex: 1">
+              {% if res[key].get('img') %}
+              <img
+                src="{{ res[key]['img'] }}"
+                style="
+                  width: 60px;
+                  height: auto;
+                  border: 1px solid black;
+                  border-radius: 4px;
+                "
+                onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/pgunavail.jpg') }}';"
+              />
+              {% endif %}
+              <a
+                href="/manga_result/choice/{{key}}"
+                style="
+                  font-weight: bold;
+                  font-size: 1.2rem;
+                  text-decoration: none;
+                  color: black;
+                "
+              >
+                {{ res[key]['title'] }}
+              </a>
+            </div>
             <form action="/removeFavConfirm/{{key}}" style="margin: 0">
               <button
                 type="submit"
